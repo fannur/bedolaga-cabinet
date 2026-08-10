@@ -30,6 +30,13 @@ import LegalConsent from '../components/LegalConsent';
 import { infoApi } from '../api/info';
 import type { LegalConsentConfig } from '../types';
 
+// Переход по ссылке с ?tab=register (или голым ключом ?register) открывает
+// вкладку «Регистрация» вместо дефолтной «Вход».
+function shouldOpenRegisterTab(): boolean {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('tab') === 'register' || params.has('register');
+}
+
 export default function Login() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -54,8 +61,16 @@ export default function Login() {
   const referralCode = getPendingReferralCode() || '';
 
   const [authMode, setAuthMode] = useState<'login' | 'register'>(() =>
-    referralCode ? 'register' : 'login',
+    shouldOpenRegisterTab() || referralCode ? 'register' : 'login',
   );
+
+  // Читаем GET-параметры адресной строки на монтировании и переключаем
+  // вкладку на «Регистрацию», если пришли с ?tab=register или ?register.
+  useEffect(() => {
+    if (shouldOpenRegisterTab()) {
+      setAuthMode('register');
+    }
+  }, []);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
