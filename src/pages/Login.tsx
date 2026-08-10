@@ -31,10 +31,11 @@ import { infoApi } from '../api/info';
 import type { LegalConsentConfig } from '../types';
 
 // Переход по ссылке с ?tab=register (или голым ключом ?register) открывает
-// вкладку «Регистрация» вместо дефолтной «Вход».
+// вкладку «Регистрация» вместо дефолтной «Вход». Параметр campaign (любое
+// значение) из рекламных ссылок — тоже открывает регистрацию.
 function shouldOpenRegisterTab(): boolean {
   const params = new URLSearchParams(window.location.search);
-  return params.get('tab') === 'register' || params.has('register');
+  return params.get('tab') === 'register' || params.has('register') || params.has('campaign');
 }
 
 export default function Login() {

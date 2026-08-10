@@ -332,7 +332,8 @@ export function safeRedirectToLogin(): void {
     // Guard: don't redirect if already on /login to prevent infinite reload loops
     if (window.location.pathname === '/login') return;
     saveReturnUrl();
-    window.location.href = '/login';
+    // Keep the query string (?campaign=..., ?tab=...) so the auth page can act on it
+    window.location.href = `/login${window.location.search}`;
   }
 }
 

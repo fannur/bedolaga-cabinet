@@ -38,7 +38,7 @@ export function PermissionRoute({
 
   if (!isAuthenticated) {
     saveReturnUrl();
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+    return <Navigate to={`/login${location.search}`} replace state={{ from: location.pathname }} />;
   }
 
   if (!isAdmin) {
