@@ -24,6 +24,7 @@ import TelegramLoginButton from '../components/TelegramLoginButton';
 import OAuthProviderIcon from '../components/OAuthProviderIcon';
 import { saveOAuthState } from '../utils/oauth';
 import { getPendingReferralCode } from '../utils/referral';
+import { getPendingCampaignSlug } from '../utils/campaign';
 import { UsersIcon, EmailIcon, RefreshIcon, ChevronDownIcon } from '@/components/icons';
 import LegalFooter from '../components/LegalFooter';
 import LegalConsent from '../components/LegalConsent';
@@ -32,10 +33,17 @@ import type { LegalConsentConfig } from '../types';
 
 // Переход по ссылке с ?tab=register (или голым ключом ?register) открывает
 // вкладку «Регистрация» вместо дефолтной «Вход». Параметр campaign (любое
-// значение) из рекламных ссылок — тоже открывает регистрацию.
+// значение) из рекламных ссылок — тоже открывает регистрацию. Слаг кампании
+// при этом вычищается из URL при инициализации стора (captureCampaignFromUrl),
+// поэтому дополнительно проверяем его сохранённую копию в localStorage.
 function shouldOpenRegisterTab(): boolean {
   const params = new URLSearchParams(window.location.search);
-  return params.get('tab') === 'register' || params.has('register') || params.has('campaign');
+  return (
+    params.get('tab') === 'register' ||
+    params.has('register') ||
+    params.has('campaign') ||
+    getPendingCampaignSlug() !== null
+  );
 }
 
 export default function Login() {
